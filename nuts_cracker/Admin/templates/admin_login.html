@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block header %}
+{% endblock header %}
+
+{% block content %}
+<main class="h-100">
+  <section class="m-auto">
+    <form action="" method="post" class="border border-1 border-info">
+      <legend>Login as Administrator</legend>
+      <fieldset>
+        {% csrf_token %}
+        {{form}}
+      </fieldset>
+      <button class="btn bth-sucsess" type="submit">Submit</button>
+    </form>
+  </section>
+</main>
+{% endblock content %}
