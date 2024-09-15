@@ -5,7 +5,8 @@ from django.contrib.auth.models import User
 
 class Category(models.Model):
   category_name=models.CharField(max_length=50,null=False)
-  no_of_prducts=models.PositiveIntegerField(default=0)
+  no_of_products=models.PositiveIntegerField(default=0)
+  status=models.BooleanField(default=False)
 
   def __str__(self):
     return self.category_name

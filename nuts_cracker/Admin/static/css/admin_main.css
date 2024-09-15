@@ -1,15 +1,31 @@
+
+
+
+
+:root{
+  --FF:'Times New Roman', Times, serif;
+}
+
+
+/* || NAVBAR DROPDOWN HOVER EFECT */
+
 @media (min-width: 992px) {
   .navbar .dropdown:hover .dropdown-menu {
     display: block;
     margin-top: 0;
+    opacity: 1;
+    visibility: visible;
+    right: 0;
+    left: auto;
   }
+
   .navbar .dropdown-menu {
     transition: opacity 0.3s ease-in-out;
     opacity: 0;
     visibility: hidden;
   }
-  .navbar .dropdown:hover .dropdown-menu {
-    opacity: 1;
-    visibility: visible;
-  }
+}
+
+.H0{
+  font-family: var(--FF);
 }
