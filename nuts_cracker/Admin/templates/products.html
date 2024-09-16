@@ -1,2 +1,42 @@
 {% extends 'base.html' %}
 
+{% block main %}
+
+<main class="container py-4">
+  <section class="row justify-content-center">
+    <div class="col-lg-8 col-md-12 order-lg-1">
+      <table class="table table-light table-hover table-bordered">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>No. of Products</th>
+            <th class="text-primary text-center">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for cat in category %}
+          
+          <tr>
+            <td>{{ cat.id }}</td>
+            <td>{{ cat.category_name }}</td>
+            <td>{{ cat.no_of_products }}</td>
+            <td class="text-center d-flex justify-content-center align-items-center">
+              <a class="text-decoration-none" href="{% url 'catg_update_view' cat.id %}">
+                <span class="material-symbols-outlined">edit_note</span>
+              </a>
+
+              <a class="text-decoration-none ms-3 text-danger" href="{% url 'catg_delete_view' cat.id %}"
+                onclick="return confirmDelete();">
+                <span class="material-symbols-outlined">delete</span>
+              </a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+</main>
+
+{% endblock main %}

@@ -8,7 +8,7 @@ from django.views.generic import TemplateView,FormView,ListView,DetailView,Updat
 from django.contrib.auth import login,logout,authenticate
 from django.contrib import messages
 from .forms import AdminLoginForm,AddCategoryForm,UpdateCategoryForm
-from .models import Category
+from .models import Category,Products
 
 
 """Here the Admin panal views are diaplayd """
@@ -29,8 +29,10 @@ class AdminLoginView(FormView):
       user=authenticate(request,username=uname,password=psw)
       if (user.is_superuser):
         login(request,user)
+        messages.success(request, 'Login successfull.')
         return redirect('admin_index')
     except:
+      messages.warning(request, 'Please fill the corect datas.')
       return redirect('admin_login')
     
 class LogoutView(View):
@@ -38,6 +40,7 @@ class LogoutView(View):
     logout(request)
     messages.warning(request,'Your LogOut !')
     return redirect('admin_index')
+
 
 """|| CATEGORY VIEWS ||"""
 
@@ -88,6 +91,7 @@ class CategoryDeleteView(View):
     return redirect('category_view')
 
 
+# class CategoryDeleteView(DeleteView):
   # model = Category
   # success_url = reverse_lazy('category_view')
   # pk_url_kwarg='id'
@@ -104,3 +108,12 @@ class CategoryDeleteView(View):
     
   #   messages.success(self.request, f"Category '{self.object.category_name}' deleted successfully.")
   #   return super().delete(request, *args, **kwargs)
+
+
+"""|| PRODUCTS VIEWS ||"""
+
+class ProductView(ListView):
+  model=Products
+  pass
+
+class 
