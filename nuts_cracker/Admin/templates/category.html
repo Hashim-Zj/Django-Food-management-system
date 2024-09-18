@@ -2,9 +2,6 @@
 
 {% block main %}
 
-<link rel="stylesheet"
-  href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
-
 <main class="container-lg py-4">
   <section class="row">
     <h1 class="display-4 fw-bold mb-4">Categories</h1>
@@ -44,11 +41,11 @@
             <td>{{ cat.category_name }}</td>
             <td>{{ cat.no_of_products }}</td>
             <td class="text-center d-flex justify-content-center align-items-center">
-              <a class="text-decoration-none" href="{% url 'catg_update_view' cat.id %}">
-                <span class="material-symbols-outlined">edit_note</span>
+              <a class="text-decoration-none" href="{% url 'category_edit' cat.id %}">
+                <span class="material-symbols-outlined">edit</span>
               </a>
 
-              <a class="text-decoration-none ms-3 text-danger" href="{% url 'catg_delete_view' cat.id %}"
+              <a class="text-decoration-none ms-3 text-danger" href="{% url 'category_delete' cat.id %}"
                 onclick="return confirmDelete();">
                 <span class="material-symbols-outlined">delete</span>
               </a>

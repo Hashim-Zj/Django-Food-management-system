@@ -7,7 +7,7 @@ from django.views import View
 from django.views.generic import TemplateView,FormView,ListView,DetailView,UpdateView,DeleteView
 from django.contrib.auth import login,logout,authenticate
 from django.contrib import messages
-from .forms import AdminLoginForm,AddCategoryForm,UpdateCategoryForm
+from .forms import AdminLoginForm,AddCategoryForm,UpdateCategoryForm,ProductForm
 from .models import Category,Products
 
 
@@ -66,13 +66,13 @@ class CategoryView(ListView):
       if form.is_valid():
           category_name = form.cleaned_data['category_name']
           Category.objects.create(category_name=category_name, status=True)
-      return redirect('category_view')
+      return redirect('category_list')
 
 class CategoryUpdateView(UpdateView):
   template_name='category_update.html'
   model=Category
   form_class=UpdateCategoryForm
-  success_url=reverse_lazy('category_view')
+  success_url=reverse_lazy('category_list')
   pk_url_kwarg='id'
 
   def form_valid(self, form):
@@ -87,13 +87,13 @@ class CategoryDeleteView(View):
       messages.success(self.request, f"Category '{cat.category_name}' deleted successfully.")
     except:
       messages.warning(request, "The category you are trying to delete does not exist.")
-      return redirect('category_view')
-    return redirect('category_view')
+      return redirect('category_list')
+    return redirect('category_list')
 
 
 # class CategoryDeleteView(DeleteView):
   # model = Category
-  # success_url = reverse_lazy('category_view')
+  # success_url = reverse_lazy('category_list')
   # pk_url_kwarg='id'
 
   # def delete(self, request, *args, **kwargs):
@@ -114,6 +114,53 @@ class CategoryDeleteView(View):
 
 class ProductView(ListView):
   model=Products
-  pass
+  template_name='products.html'
+  context_object_name='products'
+  
+  
+class AddProductView(FormView):
+  template_name='add_product.html'
+  form_class=ProductForm
+  success_url=reverse_lazy('product_list')   # Redirect after successful product addition
 
-class 
+  def form_valid(self, form):
+    form.save() # Save the product to the database
+    return super().form_valid(form)
+  
+
+class ProductUpdateView(UpdateView):
+  model = Products
+  form_class = ProductForm
+  template_name = 'edit_product.html'
+  success_url = reverse_lazy('product_list')
+
+  def form_valid(self, form):
+    messages.success(self.request,'Product updated.')
+    return super().form_valid(form)
+
+
+class ProductDeleteView(View):
+  def get(self, request, *args, **kwargs):
+    id = kwargs.get('pk')
+    try:
+      product = Products.objects.get(id=id)
+      product.delete()
+      messages.success(self.request, f"Product '{product.title}' deleted successfully.")
+    except Products.DoesNotExist:
+      messages.warning(request, "The product you are trying to delete does not exist.")
+      return redirect('product_list')
+    return redirect('product_list')
+
+# class ProductDeleteView(DeleteView):
+#   model=Products
+#   success_url=reverse_lazy('product_list')
+
+#   def delete(self, request, *args, **kwargs):
+#     try:
+#       product = self.get_object()  # Get the product object
+#       response = super().delete(request, *args, **kwargs)
+#       messages.success(request, f"Product '{product.title}' deleted successfully.")
+#       return response
+#     except:
+#       messages.warning(request, "The product you are trying to delete does not exist.")
+#       return self.get(request, *args, **kwargs)

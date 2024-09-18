@@ -13,6 +13,9 @@
       {% block title %}
       Pricerve your foods for a beter day | Admin panal
       {% endblock title %}</title>
+    <link rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+
   </head>
 
   <body>
@@ -39,10 +42,10 @@
                 <a class="nav-link" href="#">Home</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="{% url 'category_view' %}">Category</a>
+                <a class="nav-link" href="{% url 'category_list' %}">Category</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="">Product</a>
+                <a class="nav-link" href="{% url 'product_list' %}">Product</a>
               </li>
 
             </ul>

@@ -15,10 +15,13 @@ class Products(models.Model):
   title=models.CharField(max_length=50,null=False)
   description=models.TextField(max_length=300,blank=True)
   quantity=models.CharField(max_length=50)
-  stoke=models.PositiveIntegerField()
+  stock=models.PositiveIntegerField()
   category=models.ForeignKey(Category,on_delete=models.CASCADE)
+  mrp=models.PositiveIntegerField()
   price=models.PositiveIntegerField()
   image=models.ImageField(upload_to="media/products/",blank=True,null=True)
+  thumbnail=models.ImageField(upload_to="media/products/thumbnails/",blank=True,null=True)
   
   def __str__(self):
     return self.title
+  

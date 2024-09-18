@@ -39,17 +39,38 @@ class UpdateCategoryForm(forms.ModelForm):
 class ProductForm(forms.ModelForm):
   class Meta:
     model=Products
-    fields=['title','description','quantity','category','price','image']
+    fields=['title','description','quantity','stock','category','mrp','price','image','thumbnail']
     widgets = {
-      'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter product title'}),
+      'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter product title', 'required': True}),
       'description': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Enter product description'}),
-      'quantity': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter quantity eg: 500g'}),
-      'stoke':forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter totel stoke'}),
-      'category': forms.Select(attrs={'class': 'form-control'}),
-      'price': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter price'}),
-      'image': forms.ClearableFileInput(attrs={'class': 'form-control'}),
+      'quantity': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter quantity eg: 500g', 'required': True}),
+      'stock':forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter totel stock', 'required': True}),
+      'category': forms.Select(attrs={'class': 'form-control', 'required': True}),
+      'mrp': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter MRP', 'required': True}),
+      'price': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter price', 'required': True}),
+      'image': forms.ClearableFileInput(attrs={'class': 'form-control', 'required': True}),
+      'thumbnail': forms.ClearableFileInput(attrs={'class': 'form-control'}),
     }
   def __init__(self,*args,**kwargs):
     super().__init__(*args,**kwargs)
     # category choices from Category model
     self.fields['category'].queryset=Category.objects.filter(status=True)
+
+  def clean(self):
+      cleaned_data = super().clean()
+      title = cleaned_data.get('title')
+      price = cleaned_data.get('price')
+      stock = cleaned_data.get('stock')
+      mrp=cleaned_data.get('mrp')
+
+      # Custom validation example
+      if not title:
+        self.add_error('title', 'Title cannot be empty.')
+
+      if mrp is not None and price is not None and price > mrp:
+        self.add_error('price', 'Price must be less than or equal to MRP.')
+
+      if stock is None or stock < 0:
+        self.add_error('stock', 'Stock cannot be negative.')
+
+      return cleaned_data

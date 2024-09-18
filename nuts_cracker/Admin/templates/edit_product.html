@@ -4,10 +4,10 @@
 <main class="container mt-5">
   <section class="row justify-content-center">
     <div class="col-md-8">
-      <h2 class="mb-4">Add New Product</h2>
+      <h2 class="mb-4">Edit Product: {{ form.instance.title }}</h2>
 
       <!-- Form begins here -->
-      <form method="POST" enctype="multipart/form-data" novalidate>
+      <form method="POST" enctype="multipart/form-data" novalidate class="mb-4">
         {% csrf_token %}
         <fieldset class="border p-4 rounded">
           <legend class="w-auto px-2">Product Details</legend>
@@ -89,7 +89,6 @@
             </div>
           </section>
           
-
           <!-- Image and Thumbnail fields -->
           <section class="row mb-3">
             <div class="col-lg-6 mb-3 mb-lg-0">
@@ -113,7 +112,7 @@
           </section>
 
         </fieldset>
-        <button type="submit" class="btn btn-success mt-3">Add Product</button>
+        <button type="submit" class="btn btn-success mt-3">Update Product</button>
       </form>
     </div>
   </section>
