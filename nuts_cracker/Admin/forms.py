@@ -39,7 +39,7 @@ class UpdateCategoryForm(forms.ModelForm):
 class ProductForm(forms.ModelForm):
   class Meta:
     model=Products
-    fields=['title','description','quantity','stock','category','mrp','price','image','thumbnail']
+    fields=['title','description','quantity','stock','category','mrp','price','image']
     widgets = {
       'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter product title', 'required': True}),
       'description': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Enter product description'}),
@@ -49,7 +49,7 @@ class ProductForm(forms.ModelForm):
       'mrp': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter MRP', 'required': True}),
       'price': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter price', 'required': True}),
       'image': forms.ClearableFileInput(attrs={'class': 'form-control', 'required': True}),
-      'thumbnail': forms.ClearableFileInput(attrs={'class': 'form-control'}),
+
     }
   def __init__(self,*args,**kwargs):
     super().__init__(*args,**kwargs)

@@ -1,0 +1,31 @@
+{% extends 'index.html' %}
+{% load static %}
+
+{% block main %}
+
+<main class="container mt-5">
+  <div class="row">
+    {% for product in products %}
+      <div class="col-md-4 mb-4">
+        <div class="card">
+          {% if product.image %}
+            <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.title }}">
+          {% else %}
+            <img src="{% static 'img/placeholder.avif' %}" class="card-img-top" alt="Image not available">
+          {% endif %}
+          <div class="card-body">
+            <h5 class="card-title">{{ product.title }}</h5>
+            <p class="card-text">{{ product.description|truncatewords:20 }}</p>
+            <p class="card-text"><strong>Price:</strong> ${{ product.price }}</p>
+            <a href="{% url 'add_to_cart' product.id %}" class="btn btn-primary">Add to Cart</a>
+            <a href="{% url 'place_order' product.id %}" class="btn btn-success">Place Order</a>
+          </div>
+        </div>
+      </div>
+    {% empty %}
+      <p class="display-4">No products available.</p>
+    {% endfor %}
+  </div>
+</main>
+
+{% endblock main %}

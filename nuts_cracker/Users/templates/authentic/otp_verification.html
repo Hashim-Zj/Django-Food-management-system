@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block header %}
+
+{% endblock header %}
+
+{% block main %}
+<main class="container mt-5">
+  <section class="row justify-content-center">
+    <div class="col-md-6">
+      <h2 class="mb-4">OTP Verification</h2>
+
+      <form method="post">
+        {% csrf_token %}
+        {% if error %}
+          <div class="alert alert-danger">{{ error }}</div>
+        {% endif %}
+        <div class="form-group mb-3">
+          <label for="otp_code" class="form-label">Enter OTP</label>
+          <input type="text" name="otp_code" id="otp_code" class="form-control" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Verify OTP</button>
+      </form>
+    </div>
+  </section>
+</main>
+{% endblock main %}

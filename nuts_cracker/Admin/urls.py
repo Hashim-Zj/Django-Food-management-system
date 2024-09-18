@@ -3,8 +3,8 @@ from . import views
 
 urlpatterns = [
   path('',views.AdminHomeView.as_view(),name='admin_index'),
-  path('AdminLogin',views.AdminLoginView.as_view(),name='admin_login'),
-  path('AdminLogout',views.LogoutView.as_view(),name='admin_logout'),
+  path('login',views.AdminLoginView.as_view(),name='admin_login'),
+  path('logout',views.LogoutView.as_view(),name='admin_logout'),
   path('category/list&add',views.CategoryView.as_view(),name='category_list'),
   path('category/edit/<int:id>',views.CategoryUpdateView.as_view(),name='category_edit'),
   path('category/delete/<int:id>',views.CategoryDeleteView.as_view(),name='category_delete'),
