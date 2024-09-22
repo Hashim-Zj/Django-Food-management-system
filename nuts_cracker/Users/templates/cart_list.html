@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block main %}
+<main class="container mt-5">
+  <h2>Your Cart</h2>
+
+  {% if cart_items %}
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>Image</th>
+        <th>Product Title</th>
+        <th>Quantity</th>
+        <th>Price</th>
+        <th>Total Price</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in cart_items %}
+      <tr>
+        <td>
+          {% if item.product.image %}
+          <img src="{{ item.product.image.url }}" alt="{{ item.product.title }}" style="width: 50px; height: auto;">
+          {% else %}
+          <img src="{% static 'img/placeholder.avif' %}" alt="Image not available" style="width: 50px; height: auto;">
+          {% endif %}
+        </td>
+        <td>{{ item.product.title }}</td>
+        <td>{{ item.quantity }}</td>
+        <td>{{ item.product.price }}</td>
+        <td>{{ item.product.price|floatformat:2 }} × {{ item.quantity }} =
+          {{ item.product.price|floatformat:2|multiply:item.quantity|floatformat:2 }}</td>
+        <td>
+          <a href="{% url 'edit_cart_item' item.id %}" class="btn btn-warning btn-sm">Edit</a>
+          <a href="{% url 'delete_cart_item' item.id %}" class="btn btn-danger btn-sm">Delete</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p>Your cart is empty.</p>
+  {% endif %}
+</main>
+{% endblock main %}

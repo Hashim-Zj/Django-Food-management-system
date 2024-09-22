@@ -1,28 +1,97 @@
 {% extends 'base.html' %}
+{% load static %}
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+{% endblock style %}
 
 {% block header %}
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-  <a class="navbar-brand" href="{% url 'index' %}">Product Shop</a>
-  <div class="collapse navbar-collapse">
-    <ul class="navbar-nav mr-auto">
-      <li class="nav-item">
-        <a class="nav-link" href="{% url 'product_list' %}">Products</a>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <div class="container-fluid">
+    <figure>
+      <img class="" src="" alt="...">
+    </figure>
+    <a class="navbar-brand" href="#">
+      <h1 class="display-5 fw-bold">NutCracker </h1>
+    </a>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+      <ul class="navbar-nav mx-auto mb-2 mb-lg-0 fw-bold">
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'index' %}">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'index' %}">Category</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'index' %}">Product</a>
+        </li>
+
+      </ul>
+      <form class="d-flex" role="search">
+        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+        <button class="btn btn-outline-secondary" type="submit"><span class="material-symbols-outlined mt-1">
+            search
+          </span></button>
+      </form>
+
+      <ul class="navbar-nav ms-auto">
+        {% if request.user.is_authenticated %}
+
+        <li class="nav-item" style="margin-right: 15px;">
+          <a href="{% url 'wishlist' %}" class="position-relative" style="text-decoration: none; color: inherit;">
+              <span class="material-icons" style="font-size: 32px;">favorite</span> 
+              {% if wishlist_count > 0 %}
+                <span class="badge bg-danger position-absolute top-0 start-100 translate-middle">{{ wishlist_count }}</span>
+              {% endif %}
+          </a>
       </li>
-      <!-- Add more navigation links here -->
-    </ul>
-    <div class="d-flex">
-      <!-- Display messages -->
-      {% if messages %}
-        <div class="alert alert-dismissible fade show" role="alert">
-          {% for message in messages %}
-            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
-          {% endfor %}
-        </div>
-      {% endif %}
-      <!-- Optional: Add a login or account link here -->
+      <li class="nav-item">
+          <a href="{% url 'cartlist' %}" class="position-relative" style="text-decoration: none; color: inherit;">
+            <span class="material-icons">
+              shopping_cart
+              </span>
+              <!-- <span class="material-icons" style="font-size: 32px;">shopping_cart</span> -->
+              {% if cart_count > 0 %}
+                <span class="badge bg-danger position-absolute top-0 start-100 translate-middle">{{ cart_count }}</span>
+              {% endif %}
+          </a>
+      </li>
+      
+      
+        
+        {% else %}
+        <li class="nav-item"><a class="btn btn-outline-dark px-2 fw-bold" href="{% url 'register' %}">Sign Up</a></li>
+        <li class="nav-item"><a class="btn btn-outline-dark px-2 fw-bold" href="{% url 'login' %}">Sign In</a></li>
+        {% endif %}
+        {% if request.user.is_authenticated %}
+
+        <li class="nav-item dropdown">
+
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
+            aria-expanded="false">
+            {{ request.user }}
+          </a>
+
+          <ul class="dropdown-menu dropdown-menu-end dropdown-menu-end-hover" aria-labelledby="navbarDropdown">
+            <li><a class="dropdown-item" href="{% url 'create_profile' %}">Your Profile</a></li>
+
+            <li><a class="dropdown-item" href="{% url 'logout' %}">LogOut</a></li>
+          </ul>
+        </li>
+        {% endif %}
+      </ul>
     </div>
   </div>
 </nav>
+<style>
+  
+</style>
 {% endblock header %}
 
 {% block main %}

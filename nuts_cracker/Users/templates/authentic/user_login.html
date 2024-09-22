@@ -1,0 +1,58 @@
+{% extends 'index.html' %}
+
+{% block header %}
+{% endblock header %}
+
+{% block main %}
+<main class="container mt-5">
+  <section class="row justify-content-center">
+    <div class="col-md-6">
+      <h2 class="mb-4 text-center">Login To Your Profile</h2>
+
+      <div class="shadow-sm rounded" style="padding: 20px;">
+        <form method="post" class="p-4 rounded" style="background-color: #f9f9f9;">
+          {% csrf_token %}
+          {{ form }}
+          <button type="submit" class="btn btn-primary w-100 mt-3">Login</button>
+        </form>
+      </div>
+
+      <div class="text-center mt-3">
+        <a href="" class="text-muted">Forgot Password?</a>
+      </div>
+
+      <div class="text-center mt-4">
+        <p>Don't have an account? <a href="{% url 'register' %}" class="text-primary">Sign up here</a></p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<style>
+  form {
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: none; /* Remove shadow from the form itself */
+  }
+
+  button.btn-primary {
+    background-color: #007bff;
+    border: none;
+    padding: 10px;
+    font-size: 16px;
+  }
+
+  button.btn-primary:hover {
+    background-color: #0056b3;
+  }
+
+  a.text-primary:hover {
+    text-decoration: underline;
+  }
+
+  a.text-muted:hover {
+    text-decoration: none;
+    color: #6c757d;
+  }
+</style>
+{% endblock main %}

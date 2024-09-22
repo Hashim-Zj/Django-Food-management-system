@@ -9,11 +9,14 @@ from django.contrib.auth import login,logout,authenticate
 from django.contrib import messages
 from .forms import AdminLoginForm,AddCategoryForm,UpdateCategoryForm,ProductForm
 from .models import Category,Products
+from .decorator import admin_required
+from django.utils.decorators import method_decorator
 
 
 """Here the Admin panal views are diaplayd """
 
 # main page loding
+@method_decorator(admin_required,name="dispatch")
 class AdminHomeView(TemplateView):
   template_name='base.html'
 
@@ -34,7 +37,8 @@ class AdminLoginView(FormView):
     except:
       messages.warning(request, 'Please fill the corect datas.')
       return redirect('admin_login')
-    
+
+@method_decorator(admin_required,name="dispatch")
 class LogoutView(View):
   def get(self,request):
     logout(request)
@@ -44,6 +48,7 @@ class LogoutView(View):
 
 """|| CATEGORY VIEWS ||"""
 
+@method_decorator(admin_required,name="dispatch")
 class CategoryView(ListView):
   model=Category
   template_name='category.html'
@@ -68,6 +73,7 @@ class CategoryView(ListView):
           Category.objects.create(category_name=category_name, status=True)
       return redirect('category_list')
 
+@method_decorator(admin_required,name="dispatch")
 class CategoryUpdateView(UpdateView):
   template_name='category_update.html'
   model=Category
@@ -79,6 +85,7 @@ class CategoryUpdateView(UpdateView):
     messages.success(self.request,'category updated.')
     return super().form_valid(form)
   
+@method_decorator(admin_required,name="dispatch")
 class CategoryDeleteView(View):
   def get(self,request,*args,**kwargs):
     try:
@@ -112,12 +119,13 @@ class CategoryDeleteView(View):
 
 """|| PRODUCTS VIEWS ||"""
 
+@method_decorator(admin_required,name="dispatch")
 class ProductView(ListView):
   model=Products
   template_name='products.html'
   context_object_name='products'
   
-  
+@method_decorator(admin_required,name="dispatch")
 class AddProductView(FormView):
   template_name='add_product.html'
   form_class=ProductForm
@@ -127,7 +135,7 @@ class AddProductView(FormView):
     form.save() # Save the product to the database
     return super().form_valid(form)
   
-
+@method_decorator(admin_required,name="dispatch")
 class ProductUpdateView(UpdateView):
   model = Products
   form_class = ProductForm
@@ -138,7 +146,7 @@ class ProductUpdateView(UpdateView):
     messages.success(self.request,'Product updated.')
     return super().form_valid(form)
 
-
+@method_decorator(admin_required,name="dispatch")
 class ProductDeleteView(View):
   def get(self, request, *args, **kwargs):
     id = kwargs.get('pk')
@@ -164,3 +172,5 @@ class ProductDeleteView(View):
 #     except:
 #       messages.warning(request, "The product you are trying to delete does not exist.")
 #       return self.get(request, *args, **kwargs)
+
+

@@ -5,23 +5,99 @@
 {% endblock header %}
 
 {% block main %}
-<main class="container mt-5">
+<main class="container mt-5 d-flex justify-content-center align-items-center" style="min-height: 80vh; font-size: 1.5rem;">
   <section class="row justify-content-center">
-    <div class="col-md-6">
-      <h2 class="mb-4">OTP Verification</h2>
+    <div class="col">
+      <div class="card" style="width: 100%;">
+        <div class="card-body text-center">
+          <h2 class="mb-4">OTP Verification</h2>
 
-      <form method="post">
-        {% csrf_token %}
-        {% if error %}
-          <div class="alert alert-danger">{{ error }}</div>
-        {% endif %}
-        <div class="form-group mb-3">
-          <label for="otp_code" class="form-label">Enter OTP</label>
-          <input type="text" name="otp_code" id="otp_code" class="form-control" required>
+          <form method="post">
+            {% csrf_token %}
+            <div class="form-group mb-3">
+              <input type="hidden" name="redirect_url" value="{{ redirect_url }}">
+              <label for="otp_code" class="form-label">Enter OTP</label>
+              <input type="text" name="otp_code" id="otp_code" class="form-control text-center" required
+                placeholder="Enter 6-digit OTP code" style="width: 100%; max-width: 300px; margin: 0 auto;">
+            </div>
+            <button type="submit" class="btn btn-primary btn-block" style="width: 100%; max-width: 300px; margin: 0 auto;">Verify OTP</button>
+          </form>
+
+          <p class="mt-3 small-text">
+            <span class="otp-text">Didn't receive the OTP?</span>
+            <form method="POST" action="{% url 'otp_resend' %}" style="display: inline;">
+              {% csrf_token %}
+              <input type="hidden" name="redirect_url" value="{{ redirect_url }}">
+              <button id="resend-otp-link" type="submit" class="btn-link text-decoration-underline" style="background: none; border: none; padding: 0; cursor: pointer;">Click here to resend</button>
+            </form>
+            
+            <span id="timer-text" class="text-danger ms-2">Timer: <span id="timer-value"></span></span>
+          </p>
+
         </div>
-        <button type="submit" class="btn btn-primary">Verify OTP</button>
-      </form>
+      </div>
     </div>
   </section>
 </main>
+
+<!-- Timer Script -->
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    var resendOtpLink = document.getElementById("resend-otp-link");
+    var timerText = document.getElementById("timer-text");
+    var timeLeft = 30;  // Time in seconds before the resend link is enabled
+
+    function updateTimer() {
+      if (timeLeft > 0) {
+        resendOtpLink.style.pointerEvents = "none";
+        resendOtpLink.style.color = "gray";
+        timerText.innerHTML = "You can resend OTP in " + timeLeft + " seconds.";
+        timeLeft--;
+        setTimeout(updateTimer, 1000);
+      } else {
+        resendOtpLink.style.pointerEvents = "auto";
+        resendOtpLink.style.color = "";
+        timerText.innerHTML = "";
+      }
+    }
+
+    // Start the timer as soon as the page loads
+    updateTimer();
+  });
+</script>
+
+<style>
+  .mt-3 {
+    margin-top: 1rem; /* Adjust as needed */
+  }
+
+  .small-text {
+    font-size: 0.875rem; /* Adjust for small text size */
+    line-height: 1.2; /* Adjust line height as needed */
+  }
+
+  .otp-text,
+  #resend-otp-link,
+  #timer-text {
+    display: block; /* Keeps each part on its own line */
+    white-space: nowrap; /* Prevents wrapping */
+  }
+
+  /* Ensure form control is responsive */
+  .form-control {
+    width: 100%; /* Full width */
+    max-width: 300px; /* Set a maximum width */
+  }
+
+  .btn-link {
+    color: #007bff; /* Link color */
+    text-decoration: underline; /* Underline for links */
+    cursor: pointer; /* Pointer cursor for links */
+  }
+
+  .btn-link:hover {
+    text-decoration: none; /* Remove underline on hover */
+  }
+</style>
+
 {% endblock main %}

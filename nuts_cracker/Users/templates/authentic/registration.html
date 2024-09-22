@@ -1,17 +1,81 @@
 {% extends 'index.html' %}
 
-{% block main %}
-<main class="container mt-5">
-  <section class="row justify-content-center">
-    <div class="col-md-6">
-      <h2 class="mb-4">Register</h2>
+{% block header %}
+{% endblock header %}
 
-      <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-primary">Register</button>
-      </form>
+{% block main %}
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card shadow-lg p-4">
+        <h2 class="text-center mb-4">User Registration</h2>
+        <form method="POST" novalidate>
+          {% csrf_token %}
+          <!-- Username Field -->
+          <div class="form-group mb-3">
+            {{ form.username.label_tag }}
+            {{ form.username}}
+            {% if form.username.errors %}
+            <div class="text-danger small">
+              {{ form.username.errors }}
+            </div>
+            {% endif %}
+          </div>
+
+          <!-- Email Field -->
+          <div class="form-group mb-3">
+            {{ form.email.label_tag }}
+            {{ form.email}}
+            {% if form.email.errors %}
+            <div class="text-danger small">
+              {{ form.email.errors }}
+            </div>
+            {% endif %}
+          </div>
+
+          <!-- Password Fields -->
+          <div class="form-group mb-3">
+            {{ form.password1.label_tag }}
+            {{ form.password1}}
+            {% if form.password1.errors %}
+            <div class="text-danger small">
+              {{ form.password1.errors }}
+            </div>
+            {% endif %}
+          </div>
+
+          <div class="form-group mb-3">
+            {{ form.password2.label_tag }}
+            {{ form.password2}}
+            {% if form.password2.errors %}
+            <div class="text-danger small">
+              {{ form.password2.errors }}
+            </div>
+            {% endif %}
+          </div>
+
+          <!-- Enable/Disable Password Auth -->
+          <div class="form-check mb-3">
+            {{ form.enable_password_auth }}
+            {{ form.enable_password_auth.label_tag }}
+            {% if form.enable_password_auth.errors %}
+            <div class="text-danger small">
+              {{ form.enable_password_auth.errors }}
+            </div>
+            {% endif %}
+          </div>
+
+          <!-- Submit Button -->
+          <div class="d-grid gap-2">
+            <button type="submit" class="btn btn-primary btn-block">Register</button>
+          </div>
+
+          <div class="text-center mt-3">
+            <p>Already have an account? <a href="{% url 'login' %}" class="text-primary">Login here</a></p>
+          </div>
+        </form>
+      </div>
     </div>
-  </section>
-</main>
-{% endblock  main%}
+  </div>
+</div>
+{% endblock %}
