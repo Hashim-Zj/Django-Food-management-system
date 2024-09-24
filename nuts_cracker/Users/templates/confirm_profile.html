@@ -1,0 +1,9 @@
+
+
+<h2>Confirm Your Address Details</h2>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Confirm and Continue to Checkout</button>
+</form>

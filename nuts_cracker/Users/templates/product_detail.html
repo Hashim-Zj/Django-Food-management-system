@@ -1,34 +1,45 @@
 {% extends 'index.html' %}
 {% load static %}
+{% load custom_filters %}
 
 {% block main %}
 
 <main class="container mt-5">
   <div class="row">
     <div class="col-md-6">
-      {% if product.image %}
-        <img src="{{ product.image.url }}" class="img-fluid" alt="{{ product.title }}">
+
+      {% if product.image and product.image.url|file_exists %}
+      <img src="{{ product.image.url }}" class="img-fluid" alt="{{ product.title }}"
+        style="width: auto; height: 100%; object-fit: cover;">
       {% else %}
-        <img src="{% static 'img/placeholder.avif' %}" class="img-fluid" alt="Image not available">
+      <img src="{% static 'img/placeholder.jpeg' %}" class="img-fluid" alt="Image not available"
+        style="width: auto; height: 100%; object-fit: cover;">
       {% endif %}
+
     </div>
     <div class="col-md-6">
       <h1 class="mb-3">{{ product.title }}</h1>
       <p>{{ product.description }}</p>
-      <div class="price mb-3">
-        <span style="color: green; font-weight: bold;">{{ product.price }} </span>
-        <span class="material-symbols-outlined" style="color: green;">currency_rupee</span>
-        <span style="color: gray; text-decoration: line-through;">{{ product.mrp }}</span>
+      <div class="price mb-3 text-success fw-bold  d-flex align-items-center fs-4">
+        <span><span class="text-secondary">Price:</span> {{ product.price }} </span>
+        <span class="material-icons">currency_rupee</span>
+        <span class="text-secondary" style="text-decoration: line-through;">{{ product.mrp }}</span>
       </div>
-      <div class="rating mb-3">
-        <span class="material-symbols-outlined" style="color: green;">star</span>
+      <div class="rating mb-3 d-flex align-items-center">
+        <span class="material-icons" style="color: green;">star</span>
         <strong>4.5</strong>
       </div>
+
       <form action="{% url 'add_to_cart' product.id %}" method="post">
         {% csrf_token %}
-        {{ form.quantity }}  <!-- Render the quantity input from the form -->
-        <button type="submit" class="btn btn-warning">Add to Cart</button>
+        <p class="d-flex align-items-center fs-4">Pack of: {{ form.quantity }}</p>
+
+        <div class="d-flex gap-3">
+          <button type="submit" name="action" value="add_to_cart" class="btn btn-warning">Add to Cart</button>
+          <button type="submit" name="action" value="buy_now" class="btn btn-info">Buy Now</button>
+        </div>
       </form>
+
     </div>
   </div>
 </main>

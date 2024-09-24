@@ -29,7 +29,7 @@ class OTP(models.Model):
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    address = models.TextField(max_length=255)
+    address = models.TextField()
     pin_code = models.CharField(max_length=10)
     mobile_number = models.CharField(max_length=15)
     

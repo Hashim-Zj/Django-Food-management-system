@@ -1,5 +1,6 @@
 {% extends 'index.html' %}
 {% load static %}
+{% load custom_filters %}
 
 {% block main %}
 
@@ -8,12 +9,17 @@
     {% for product in products %}
     <div class="col-md-3 mb-4"> <!-- Adjusted to 4 columns -->
       <div class="card product-card" style="transition: transform 0.3s;">
+
         <div class="image-container" style="position: relative;">
-          {% if product.image %}
-          <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.title }}">
-          {% else %}
-          <img src="{% static 'img/placeholder.avif' %}" class="card-img-top" alt="Image not available">
-          {% endif %}
+          <div class="card-img-container" style="overflow: hidden;">
+            {% if product.image and product.image.url|file_exists %}
+            <img src="{{ product.image.url }}" class="img-fluid" alt="{{ product.title }}"
+              style="width: auto; height: 100%; object-fit: cover;">
+            {% else %}
+            <img src="{% static 'img/placeholder.jpeg' %}" class="img-fluid" alt="Image not available"
+              style="width: auto; height: 100%; object-fit: cover;">
+            {% endif %}
+          </div>
 
           <form
             action="{% if product.id in wishlist_products %}{% url 'remove_from_wishlist' product.id %}{% else %}{% url 'add_to_wishlist' product.id %}{% endif %}"
@@ -34,16 +40,18 @@
 
         </div>
         <div class="card-body">
-          <h5 class="card-title">{{ product.title }}</h5>
-          <p class="card-text">{{ product.description|truncatewords:2 }}</p>
+          <h5 class="card-title text-truncate">{{ product.title }}</h5>
           <div class="rating">
             <span class="material-icons" style="color: green;">star</span>
             <strong>4.5</strong>
           </div>
+          <div class="text-secondary">
+            <span>MRP:<s >{{ product.mrp }}</s> </span>
+            <span class="material-icons fs-6">currency_rupee </span>
+          </div>
           <div class="price">
-            <span style="color: green; font-weight: bold;">{{ product.price }}</span>
-            <span class="material-icons">currency_rupee </span>
-            <span style="color: gray; text-decoration: line-through;">{{ product.mrp }}</span>
+            <span style="color: green; font-weight: bold;"> Price: <i class="fs-4 fw-bold">{{ product.price }}</i></span>
+            <span class="material-icons fs-6">currency_rupee </span>
           </div>
           <a href="{% url 'product_detail' product.id %}" class="btn btn-view mt-2">View</a>
         </div>
@@ -68,7 +76,7 @@
   }
 
   .price {
-    margin-top: 10px;
+    margin-top: 2px;
     display: flex;
     align-items: center;
   }
