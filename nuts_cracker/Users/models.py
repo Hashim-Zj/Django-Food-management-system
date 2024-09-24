@@ -33,10 +33,6 @@ class Profile(models.Model):
     pin_code = models.CharField(max_length=10)
     mobile_number = models.CharField(max_length=15)
     
-    email = models.EmailField(max_length=255)
-    first_name = models.CharField(max_length=30)
-    last_name = models.CharField(max_length=30)
-
     def __str__(self):
         return f"{self.user.username}'s Profile"
     
