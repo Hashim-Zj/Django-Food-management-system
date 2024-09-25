@@ -1,0 +1,42 @@
+{% extends "base.html" %}  <!-- Update to your actual base template -->
+
+{% block main %}
+<div class="container">
+    <h2>New Orders</h2>
+
+    {% if orders %}
+    <table class="table table-hover table-bordered">
+        <thead class="thead-dark">
+            <tr>
+                <th>ID</th>
+                <th>User</th>
+                <th>Product</th>
+                <th>Total Price</th>
+                <th>Status</th>
+                <th>Date</th>
+                <th>Payment Method</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in orders %}
+            <tr>
+                <td>{{ order.id }}</td>
+                <td>{{ order.user.username }}</td>
+                <td>{{ order.product.title }}</td>
+                <td>₹{{ order.totel_price }}</td>
+                <td>{{ order.status }}</td>
+                <td>{{ order.date|date:"d M Y, H:i" }}</td>
+                <td>{{ order.get_payment_method_display }}</td>
+                <td>
+                    <a href="{% url 'order_detail' order.id %}" class="btn btn-primary btn-sm">View</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="alert alert-info">There are no new orders at the moment.</div>
+    {% endif %}
+</div>
+{% endblock %}

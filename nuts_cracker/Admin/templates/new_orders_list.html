@@ -1,4 +1,6 @@
-{% extends "base.html" %}  <!-- Update to your actual base template -->
+{% extends "base.html" %}
+
+{% load static %}
 
 {% block main %}
 <div class="container">
@@ -34,7 +36,46 @@
         </tbody>
     </table>
     {% else %}
-    <div class="alert alert-info">There are no new orders at the moment.</div>
+    <div class="no-orders-container">
+        <img src="{% static 'img/empty-orders-image.png' %}" alt="No Orders" class="no-orders-image">
+        <div class="no-orders-text">
+            <h2>No New Orders</h2>
+            <p>There are no new orders at the moment.</p>
+        </div>
+    </div>
+    <style>
+        .no-orders-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 50px;
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            margin: 20px auto;
+            max-width: 600px;
+        }
+
+        .no-orders-image {
+            width: 150px;
+            height: auto;
+            margin-bottom: 20px;
+        }
+
+        .no-orders-text h2 {
+            font-size: 2rem;
+            color: #007bff;
+            margin-bottom: 10px;
+        }
+
+        .no-orders-text p {
+            font-size: 1.2rem;
+            color: #555;
+        }
+    </style>
     {% endif %}
+
 </div>
 {% endblock %}

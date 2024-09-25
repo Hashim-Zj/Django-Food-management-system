@@ -150,6 +150,15 @@ class NewOrderListView(ListView):
     def get_queryset(self):
         return Order.objects.filter(status='order-placed').order_by('-date')
     
+@method_decorator(admin_required,name="dispatch")
+class OrderListView(ListView):
+    model = Order
+    template_name = "orders_list.html" 
+    context_object_name = "orders"
+
+    def get_queryset(self):
+        return Order.objects.all().order_by('-date')
+    
 
 @method_decorator(admin_required,name="dispatch")
 class OrderDetailView(DetailView):
@@ -166,7 +175,10 @@ class OrderDetailView(DetailView):
             order = form.save(commit=False)  # Creates an Order instance without saving it
             order.expected_delivery_date = form.cleaned_data.get('expected_delivery_date') 
             order.status = form.cleaned_data.get('status')
+            pro=Products.objects.get(id=order.product_id)
+            pro.stock=(pro.stock)-(order.cart.quantity)
             order.save()
+            
 
             self.send_order_status_email(order)
 
@@ -179,8 +191,13 @@ class OrderDetailView(DetailView):
         message = f"Dear {order.user.first_name},\n\nYour order for {order.product.title} has been updated to '{order.status}'. Expected delivery date: {order.expected_delivery_date}.\n\nThank you!"
         from_email = settings.DEFAULT_FROM_EMAIL
         recipient_list = [order.user.email]
-
-        send_mail(subject, message, from_email, recipient_list)
+        try:
+            send_mail(subject, message, from_email, recipient_list)
+            messages.success(self.request, 'Send email about order to user')
+        except:
+            messages.error(self.request, 'Connection Problem')
+            return redirect(self.request.path_info) 
+                  
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

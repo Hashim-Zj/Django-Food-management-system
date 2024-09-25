@@ -11,7 +11,7 @@
       <div class="card product-card" style="transition: transform 0.3s;">
 
         <div class="image-container" style="position: relative;">
-          <div class="card-img-container" style="overflow: hidden;">
+          <div class="card-img-container" style="overflow: hidden; height: 300px;">
             {% if product.image and product.image.url|file_exists %}
             <img src="{{ product.image.url }}" class="img-fluid" alt="{{ product.title }}"
               style="width: auto; height: 100%; object-fit: cover;">

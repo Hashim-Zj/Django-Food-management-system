@@ -56,7 +56,10 @@
               <li class="nav-item">
                 <a class="nav-link" href="{% url 'product_list' %}">Product</a>
               </li>
-
+              
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'list_orders' %}">Orders</a>
+              </li>
             </ul>
 
             <ul class="navbar-nav">
@@ -74,7 +77,8 @@
               </li>
 
               {% else %}
-              <li class="nav-item ms-auto"><a class="btn btn-outline-dark px-2 fw-bold" href="{% url 'admin_login' %}">Login</a>
+              <li class="nav-item ms-auto"><a class="btn btn-outline-dark px-2 fw-bold"
+                  href="{% url 'admin_login' %}">Login</a>
               </li>
               {% endif %}
               {% if request.user.is_authenticated %}
@@ -139,13 +143,86 @@
 
     <main>
       {% block main %}
-      <h1 class="H0">Main Panal</h1>
-      {% if request.user.is_authenticated %}
-      <p>Welcome, {{ request.user.username }}!</p>
-      {% else %}
-      <p>Hello, Anonymous User!</p>
-      {% endif %}
-      {% endblock main %}
+    <div class="welcome-container">
+        <div class="welcome-card">
+            <a href="#" class="welcome-link">
+                <div class="welcome-image"></div>
+                <div class="welcome-text text-center">
+                    {% if request.user.is_authenticated %}
+                    <h2 class="text-primary">Welcome, {{ request.user.username }}!</h2>
+                    <p>You're logged in as an admin. Manage your dashboard with ease!</p>
+                    {% else %}
+                    <h2 class="text-secondary">Hello, Anonymous User!</h2>
+                    <p>Please log in to access the admin panel.</p>
+                    {% endif %}
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <style>
+        /* Ensure the container is full-screen and centered */
+        .welcome-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            width: 100%;
+            background-color: #f0f0f0; /* Light background for contrast */
+        }
+
+        /* Style for the card */
+        .welcome-card {
+            text-align: center;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+            max-width: 400px;
+        }
+
+        /* Image div styled as a background */
+        .welcome-image {
+            background-image: url("{% static 'img/admin-welcome.jpg' %}");
+            background-size: cover;
+            background-position: center;
+            height: 250px;
+            width: 100%;
+        }
+
+        /* Link to wrap the card and make it clickable */
+        .welcome-link {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        /* Text inside the card */
+        .welcome-text {
+            padding: 20px;
+            background-color: #fff;
+        }
+
+        /* Style for the heading and paragraph */
+        .welcome-text h2 {
+            font-size: 2rem;
+            color: #007bff; /* Bootstrap primary color */
+        }
+
+        .welcome-text p {
+            font-size: 1.2rem;
+            color: #555;
+        }
+
+        /* Add some hover effect */
+        .welcome-card:hover {
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+            transform: scale(1.05);
+            transition: 0.3s ease;
+        }
+    </style>
+{% endblock main %}
+
+
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
