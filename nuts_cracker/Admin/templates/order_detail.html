@@ -1,0 +1,31 @@
+<!-- order_detail.html -->
+{% extends 'base.html' %}
+
+{% block main %}
+  <div class="container">
+    <h2>Order Detail: {{ order.product.title }}</h2>
+
+    <p><strong>Order ID:</strong> {{ order.id }}</p>
+    <p><strong>Customer:</strong> {{ order.user.first_name }} {{ order.user.last_name }}</p>
+    <p><strong>Current Status:</strong> {{ order.get_status_display }}</p>
+    <p><strong>Payment Method:</strong> {{ order.get_payment_method_display }}</p>
+    <p><strong>Total Price:</strong> ₹{{ order.totel_price }}</p>
+
+    <form method="post">
+      {% csrf_token %}
+      <div class="form-group">
+        <label for="status">Update Order Status:</label>
+        {{ form.status }}
+      </div>
+
+      <div class="form-group mt-3">
+        <label for="expected_delivery_date">Expected Delivery Date:</label>
+        {{ form.expected_delivery_date }}
+      </div>
+
+      <button type="submit" class="btn btn-primary mt-3">Save Changes</button>
+    </form>
+
+    <a href="{% url 'new_orders' %}" class="btn btn-secondary mt-3">Back to Orders</a>
+  </div>
+{% endblock %}

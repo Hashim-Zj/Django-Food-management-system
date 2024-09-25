@@ -20,11 +20,11 @@
     <div class="col-md-6">
       <h1 class="mb-3">{{ product.title }}</h1>
       <p>{{ product.description }}</p>
-      <div class="price mb-3 text-success fw-bold  d-flex align-items-center fs-4">
+      <p class="text-secondary p-0 m-0">MRP: <s>{{ product.mrp }} <span class="material-icons fs-6">currency_rupee</span></s></p>
+      <p class="p-0 mb-2 text-success fw-bold  d-flex align-items-center fs-4">
         <span><span class="text-secondary">Price:</span> {{ product.price }} </span>
         <span class="material-icons">currency_rupee</span>
-        <span class="text-secondary" style="text-decoration: line-through;">{{ product.mrp }}</span>
-      </div>
+      </p>
       <div class="rating mb-3 d-flex align-items-center">
         <span class="material-icons" style="color: green;">star</span>
         <strong>4.5</strong>
@@ -36,7 +36,6 @@
 
         <div class="d-flex gap-3">
           <button type="submit" name="action" value="add_to_cart" class="btn btn-warning">Add to Cart</button>
-          <button type="submit" name="action" value="buy_now" class="btn btn-info">Buy Now</button>
         </div>
       </form>
 

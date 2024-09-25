@@ -1,9 +1,12 @@
 {% extends 'index.html' %}
 {% load static %}
+{% load custom_filters %}
 
 {% block main %}
 <main class="container mt-5">
     <h2>Your Wishlist</h2>
+
+    {% if wishlist_items %}
     <table class="table">
         <thead>
             <tr>
@@ -16,8 +19,16 @@
         <tbody>
             {% for item in wishlist_items %}
             <tr>
-                <td><img src="{{ item.product.image.url }}" alt="{{ item.product.title }}" style="width: 50px;"></td>
-                <td>{{ item.product.title }}</td>
+                <td>
+                    {% if item.product.image and item.product.image.url|file_exists %}
+                    <img src="{{ item.product.image.url }}" alt="{{ item.product.title }}"
+                        style="width: 50px; height: auto;">
+                    {% else %}
+                    <img src="{% static 'img/placeholder.jpeg' %}" alt="Image not available"
+                        style="width: 50px; height: auto;">
+                    {% endif %}
+                </td>
+                <td class=" fw-bold">{{ item.product.title }}</td>
                 <td>{{ item.date_added }}</td>
                 <td>
                     <form action="{% url 'remove_from_wishlist' item.product.id %}" method="post">
@@ -26,12 +37,42 @@
                     </form>
                 </td>
             </tr>
-            {% empty %}
-            <tr>
-                <td colspan="4">Your wishlist is empty.</td>
-            </tr>
             {% endfor %}
         </tbody>
     </table>
+    {% else %}
+    <div class="empty-cart">
+        <img src="{% static 'img/empty_kit.jpeg' %}" alt="Empty wishlist" style="width: 300px; height: auto;">
+        <h3>Oops! Your wishlist is empty</h3>
+        <p>It looks like you haven't added anything to your wishlist yet.</p>
+        <a href="{% url 'index' %}" class="btn btn-primary mt-3">Go to Shop</a>
+    </div>
+    <style>
+        .empty-cart {
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        .empty-cart img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .empty-cart h3 {
+            color: #333;
+            margin-top: 20px;
+        }
+
+        .empty-cart p {
+            color: #777;
+            margin-bottom: 20px;
+        }
+
+        .empty-cart .btn-primary {
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+    </style>
+    {% endif %}
 </main>
 {% endblock main %}

@@ -1,3 +1,4 @@
+from django.db.models.query import QuerySet
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy, reverse
 from django.core.mail import send_mail
@@ -21,7 +22,7 @@ from .forms import (
 )
 from django.contrib.auth.models import User
 from Admin.models import Products
-from .models import OTP, Cart, Order, Wishlist,Profile
+from .models import OTP, Cart, Order, Wishlist, Profile, Payment
 
 
 # || CUSTOM VIEWS
@@ -216,22 +217,12 @@ class ForgotPasswordView(FormView):
         user = User.objects.filter(username=username, email=email).first()
         if user:
             try:
-                # otp_code=send_otp(
-                #     user,
-                #     "Your OTP Code for Password Reset",
-                #     "Hi,\nYour OTP code is: [{otp_code}]. Valid for the next 5 minutes.",
-                #     [user.email],
-                # )
                 otp, created = OTP.objects.get_or_create(user=user)
                 otp.code = str(random.randint(100000, 999999))
                 otp.created_at = timezone.now()
                 otp.used = False  # Reset the 'used' flag when a new OTP is generated
                 otp.save()
-                # messages.success(self.request, "OTP has been sent to your email.")
-                # redirect_url = reverse('reset_password')
-                # otp_url = f"{reverse('reset_password')}?otp_code={otp.code}&email={user.email}"
                 otp_url = f"{reverse('reset_password')}?otp_code={otp.code}&email={user.email}&username={username}"
-                # otp_url =f"{reverse('otp_verification')}?redirect_url={redirect_url}"
                 return redirect(otp_url)
             except:
                 messages.error(self.request, "Connection requeared.")
@@ -290,15 +281,9 @@ class ProfileFormView(FormView):
     form_class = ProfileForm
 
     def get_success_url(self):
-        if 'checkout' in self.request.GET:
-            return reverse_lazy('checkout')  # Redirect to checkout page
-        return reverse_lazy('index')
-    
-    def get_form_kwargs(self):
-        # Pass the request.user to the form for initializing first name, last name, and email
-        kwargs = super().get_form_kwargs()
-        kwargs["user"] = self.request.user
-        return kwargs
+        if "checkout" in self.request.GET:
+            return reverse_lazy("checkout")  # Redirect to checkout page
+        return reverse_lazy("index")
 
     def get_initial(self):
         # Initialize the form with data from the User model
@@ -320,9 +305,10 @@ class ProfileFormView(FormView):
         return initial
 
     def form_valid(self, form):
+        print("Form is valid!")
         # Create or update the profile instance linked to the user
         profile, created = Profile.objects.get_or_create(user=self.request.user)
-
+        print('Form')
         # Update the profile fields with the form data
         profile.mobile_number = form.cleaned_data.get("mobile_number")
         profile.address = form.cleaned_data.get("address")
@@ -355,36 +341,27 @@ class ProductDetailView(DetailView):
 @method_decorator(login_required, name="dispatch")
 class AddToCartView(View):
     def post(self, request, *args, **kwargs):
-        if request.method == "POST":
-            if request.POST.get("action") == "add_to_cart":
-                user = request.user
-                product = Products.objects.get(pk=kwargs.get("pk"))
-                qty = int(
-                    request.POST.get("quantity", 1)
-                )  # Default to 1 if not provided
+        user = request.user
+        product = Products.objects.get(pk=kwargs.get("pk"))
+        qty = int(request.POST.get("quantity", 1))  # Default to 1 if not provided
 
-                # Check if the product is already in the cart
-                cart_item, created = Cart.objects.get_or_create(
-                    user=user,
-                    product=product,
-                    status="in-cart",
-                    defaults={"quantity": qty},
-                )
+        # Check if the product is already in the cart
+        cart_item, created = Cart.objects.get_or_create(
+            user=user,
+            product=product,
+            status="in-cart",
+            defaults={"quantity": qty},
+        )
 
-                if not created:
-                    # If the cart item already exists, update the quantity
-                    cart_item.quantity += qty
-                    cart_item.save()
-                    messages.success(
-                        request, f"Updated qty of {product.title} in your cart."
-                    )
-                else:
-                    messages.success(request, f"Added {product.title} to your cart.")
+        if not created:
+            # If the cart item already exists, update the quantity to the provided value
+            cart_item.quantity = qty
+            cart_item.save()
+            messages.success(request, f"Updated qty of {product.title} in your cart.")
+        else:
+            messages.success(request, f"Added {product.title} to your cart.")
 
-                return redirect("cart_list")
-            elif request.POST.get("action") == "buy_now":
-
-                return redirect("profile_update")
+        return redirect("cart_list")
 
 
 @method_decorator(login_required, name="dispatch")
@@ -397,6 +374,25 @@ class CartListView(ListView):
         return Cart.objects.filter(user=self.request.user, status="in-cart").order_by(
             "-date"
         )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        cart_items = context["cart_items"]
+        for item in cart_items:
+            item.total_price = item.product.price * item.quantity
+        context["form"] = AddToCartForm()
+        return context
+
+
+@method_decorator(login_required, name="dispatch")
+class RemoveCartItemView(View):
+    def get(self, request, *args, **kwargs):
+        cart = Cart.objects.get(id=kwargs.get("pk"))
+        if cart:
+            cart.delete()
+            messages.info(request, "Product removed from your Cart.")
+
+        return redirect(request.META.get("HTTP_REFERER", "cart_list"))
 
 
 # || WishList Views
@@ -442,40 +438,104 @@ class RemoveFromWishlistView(View):
         return redirect(request.META.get("HTTP_REFERER", "index"))
 
 
-# class OrderPlaceView(FormView):
-#     template_name = "order_place.html"
-#     form_class = OrderPlaceForm
+@method_decorator(login_required, name="dispatch")
+class OrderNow(View):
+    def get(self, request, *args, **kwargs):
+        try:
+            profile = Profile.objects.get(user=request.user)
+        except Profile.DoesNotExist:
+            # If profile doesn't exist, redirect to profile creation page
+            messages.info(
+                request, "Please create a profile before proceeding to checkout."
+            )
+            return redirect("profile_form")
 
-#     def post(self, request, *args, **kwargs):
-#         in_cart = get_object_or_404(Cart, id=kwargs.get("id"))
-#         user = request.user
-#         email = user.email
-#         address = request.POST.get("address")
-#         phone = request.POST.get("phone")
+        # Get the cart items for the user
+        cart_item = Cart.objects.get(
+            user=request.user, status="in-cart", product_id=kwargs.get("pk")
+        )
 
-#         Order.objects.create(
-#             user=user, product_name=in_cart.product, address=address, phone=phone
-#         )
-#         in_cart.status = "order-placed"
-#         in_cart.save()
+        # Calculate total price
+        total_price = cart_item.product.price * cart_item.quantity
 
-#         # Assuming you have a send_mail function set up
-#         send_mail(
-#             "E-Bay.com",
-#             "Your order was placed successfully!",
-#             settings.EMAIL_HOST_USER,
-#             [email],
-#         )
-#         messages.success(request, "Order placed successfully")
-#         return redirect("cartlist_view")
+        context = {
+            "profile": profile,
+            "cart_items": cart_item,
+            "total_price": total_price,
+        }
+
+        # Render the checkout template
+        return render(request, "ordernow.html", context)
+
+@method_decorator(login_required, name="dispatch")
+class CheckoutView(View):
+    def post(self, request):
+        # Get the user's profile
+        user_profile_id = request.POST.get("user_profile")
+        cart_id = request.POST.get("cart_item")
+        payment_method = request.POST.get("payment_method")
+        payment_details = request.POST.get("payment_details")
+
+        # Get and Update Cart
+        cart_item = Cart.objects.get(id=cart_id)
+        price = cart_item.product.price * cart_item.quantity
+        cart_item.status='order-placed'
+        cart_item.save()
+
+        order, created = Order.objects.get_or_create(
+            product=cart_item.product,
+            user=request.user,
+            cart=cart_item,
+            payment_method=payment_method,
+            totel_price=price,
+        )
+
+        if not created:
+            order.payment_method=payment_method,
+            order.save()
+        messages.success(request, f"Order of {cart_item.product.title} is placed.")
+
+        # Create the payment record
+        payment, created = Payment.objects.get_or_create(
+            user=request.user,
+            order=order,
+            payment_method=payment_method,
+            payment_details=payment_details,
+        )
+        if not created:
+            payment.payment_details=payment_details
+            payment.save()
+        messages.success(request, f"Paymnet of {cart_item.product.title} is Successfull.")
+        
+
+        subject = 'Congratulations! Order Confirmation - Your Order is Confirmed!'
+        message = f"""
+
+        Dear {request.user.first_name},
+        Thank you for your order #{order.id} &
+
+        {cart_item.product.title} > pake of {cart_item.quantity} &
+
+        with Total Price: {price}.00₹ 
+        has been placed successfully!
+        and expected Delivery at {order.expected_delivery_date} !"""
+    
+        send_mail(
+        subject,
+        message,
+        settings.EMAIL_HOST_USER,  # Use the email from settings
+        [request.user.email],
+        fail_silently=False,
+    )
+
+        return render(request,"order_success.html")
 
 
-# class UserOrderListView(View):
-#     def get(self, request):
-#         all_orders = Order.objects.filter(user=request.user).order_by("-date")
-#         delivered = Order.objects.filter(user=request.user, status="delivered")
-#         return render(
-#             request,
-#             "user_order_list.html",
-#             {"all_orders": all_orders, "delivered": delivered},
-#         )
+@method_decorator(login_required, name="dispatch")
+class YourOrdersView(ListView):
+    model=Order
+    template_name='orderlist.html'
+    context_object_name='orders'
+
+    def get_queryset(self):
+        return Order.objects.filter(user=self.request.user).exclude(status="cancelled")

@@ -25,35 +25,33 @@
     <!-- Table (full width on small screens, and aligned left on large screens) -->
     <div class="col-lg-8 col-md-12 order-lg-1">
       <table class="table table-light table-hover table-bordered">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>No. of Products</th>
-            <th class="text-primary text-center">Actions</th>
-          </tr>
+        <thead class="table-primary text-dark">
+            <tr>
+                <th class="text-dark">ID</th>
+                <th class="text-dark">Name</th>
+                <th class="text-dark">No. of Products</th>
+                <th class="text-dark text-center">Actions</th>
+            </tr>
         </thead>
         <tbody>
-          {% for cat in category %}
-          
-          <tr>
-            <td>{{ cat.id }}</td>
-            <td>{{ cat.category_name }}</td>
-            <td>{{ cat.no_of_products }}</td>
-            <td class="text-center d-flex justify-content-center align-items-center">
-              <a class="text-decoration-none" href="{% url 'category_edit' cat.id %}">
-                <span class="material-symbols-outlined">edit</span>
-              </a>
-
-              <a class="text-decoration-none ms-3 text-danger" href="{% url 'category_delete' cat.id %}"
-                onclick="return confirmDelete();">
-                <span class="material-symbols-outlined">delete</span>
-              </a>
-            </td>
-          </tr>
-          {% endfor %}
+            {% for cat in category %}
+            <tr>
+                <td style="font-weight: bold;">{{ forloop.counter }}</td>
+                <td style="font-weight: bold;">{{ cat.category_name }}</td>
+                <td style="font-weight: bold;">{{ cat.no_of_products }}</td>
+                <td class="text-center d-flex justify-content-center align-items-center">
+                    <a class="text-decoration-none" href="{% url 'category_edit' cat.id %}">
+                        <span class="material-icons">edit</span>
+                    </a>
+                    <a class="text-decoration-none ms-3 text-danger" href="{% url 'category_delete' cat.id %}" onclick="return confirmDelete();">
+                        <span class="material-icons">delete</span>
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
         </tbody>
-      </table>
+    </table>
+    
     </div>
 
   </section>

@@ -1,47 +1,99 @@
-{% extends 'base.html' %}
+{% extends 'index.html' %}
 {% load static %}
+{% load custom_filters %}
 
 {% block main %}
 <main class="container mt-5">
   <h2>Your Cart</h2>
 
   {% if cart_items %}
+
   <table class="table table-bordered">
     <thead>
       <tr>
         <th>Image</th>
         <th>Product Title</th>
-        <th>Quantity</th>
-        <th>Price</th>
+        <th class="text-secondary text-center">Quantity x Price</th>
         <th>Total Price</th>
         <th>Actions</th>
+        <th>Buy</th>
+
       </tr>
     </thead>
     <tbody>
       {% for item in cart_items %}
-      <tr>
-        <td>
-          {% if item.product.image %}
-          <img src="{{ item.product.image.url }}" alt="{{ item.product.title }}" style="width: 50px; height: auto;">
-          {% else %}
-          <img src="{% static 'img/placeholder.avif' %}" alt="Image not available" style="width: 50px; height: auto;">
-          {% endif %}
-        </td>
-        <td>{{ item.product.title }}</td>
-        <td>{{ item.quantity }}</td>
-        <td>{{ item.product.price }}</td>
-        <td>{{ item.product.price|floatformat:2 }} × {{ item.quantity }} =
-          {{ item.product.price|floatformat:2|multiply:item.quantity|floatformat:2 }}</td>
-        <td>
-          <a href="{% url 'edit_cart_item' item.id %}" class="btn btn-warning btn-sm">Edit</a>
-          <a href="{% url 'delete_cart_item' item.id %}" class="btn btn-danger btn-sm">Delete</a>
-        </td>
-      </tr>
+      <form method="post" action="{% url 'add_to_cart' item.product.id %}">
+        {% csrf_token %}
+        <tr>
+          <td class="d-flex aligned">
+            {% if item.product.image and item.product.image.url|file_exists %}
+            <img src="{{ item.product.image.url }}" alt="{{ item.product.title }}" style="width: 50px; height: auto;">
+            {% else %}
+            <img src="{% static 'img/placeholder.jpeg' %}" alt="Image not available" style="width: 50px; height: auto;">
+            {% endif %}
+          </td>
+          <td class="fw-bold fs-5">{{ item.product.title }}</td>
+          <td class="fw-bold fs-5 text-secondary text-center">
+
+            <input type="number" min="1" name="quantity" value="{{ item.quantity }}" style="width: 50px; padding: 5px; border: none; border-radius: 5px; 
+              box-shadow: inset 0 0 5px rgba(0,0,0,0.1); font-size: 14px;">
+            <input type="hidden" name="item_id" value="{{ item.id }}">
+            x {{ item.product.price }}
+
+          </td>
+          <td class="text-success fw-bold fs-5">{{ item.total_price|floatformat:2 }}</td>
+          <td >
+            <a href="{% url 'remove_cart' item.id %}" class="btn btn-danger btn-sm me-2"
+               onclick="return confirm('Are you sure you want to remove this item from your cart?');">Delete</a>
+            <button type="submit" class="btn btn-success btn-sm">Save</button>
+          </td>
+          <td>
+            <a href="{% url 'order_now' item.product.id %}" class="btn btn-warning btn-sm">Order Now</a>
+          </td>
+          
+          </tr>
+      </form>
       {% endfor %}
     </tbody>
   </table>
+
   {% else %}
-  <p>Your cart is empty.</p>
+  <div class="empty-cart">
+    <img src="{% static 'img/empty_cart.png' %}" alt="Empty cart" style="width: 300px; height: auto;">
+    <h3>Oops! Your cart is empty</h3>
+    <p>It looks like you haven't added anything to your cart yet.</p>
+    <a href="{% url 'index' %}" class="btn btn-primary mt-3">Go to Shop</a>
+  </div>
+  <style>
+    td {
+      padding: 0;
+    }
+
+    .empty-cart {
+      text-align: center;
+      margin-top: 50px;
+    }
+
+    .empty-cart img {
+      max-width: 100%;
+      height: auto;
+    }
+
+    .empty-cart h3 {
+      color: #333;
+      margin-top: 20px;
+    }
+
+    .empty-cart p {
+      color: #777;
+      margin-bottom: 20px;
+    }
+
+    .empty-cart .btn-primary {
+      padding: 10px 20px;
+      font-size: 16px;
+    }
+  </style>
   {% endif %}
 </main>
 {% endblock main %}

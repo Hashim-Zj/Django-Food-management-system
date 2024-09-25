@@ -29,17 +29,6 @@
   color: #343a40;
 }
 
-/* Adjust form elements inside the navbar */
-.form-control {
-  max-width: 200px;
-  /* Adjust the width of the search bar */
-}
-
-/* Adjust the search icon size */
-.material-symbols-outlined {
-  font-size: 20px;
-}
-
 
 @media (min-width: 992px) {
   .navbar .dropdown:hover .dropdown-menu {
@@ -56,30 +45,4 @@
     opacity: 0;
     visibility: hidden;
   }
-}
-
-/* serch bar */
-/* Ensure both elements have the same height */
-.form-control {
-  height: calc(2.5rem + 2px); /* Adjust to match button height */
-  border-radius: 0; /* Remove borders between elements */
-}
-
-.btn {
-  height: calc(2.5rem + 2px); /* Same height as the input */
-  border-radius: 0; /* Remove borders between elements */
-}
-
-/* Remove margin from the input to eliminate space */
-.me-0 {
-  margin-right: 0; /* No margin */
-}
-
-/* Optionally, adjust padding for better alignment */
-input.form-control {
-  padding: 0.375rem 0.75rem; /* Adjust as needed */
-}
-
-.btn {
-  padding: 0.375rem 0.75rem; /* Match input padding */
 }

@@ -67,6 +67,7 @@ TEMPLATES = [
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
                 "Users.context_processors.index_count",
+                "Admin.context_processors.order_count",
             ],
         },
     },
@@ -121,7 +122,10 @@ USE_TZ = False
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [BASE_DIR / "Admin/static"]
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 MEDIA_DIR = BASE_DIR / "Media"
 MEDIA_ROOT = MEDIA_DIR

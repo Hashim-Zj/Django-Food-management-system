@@ -1,0 +1,13 @@
+{% extends 'index.html' %}
+{% load static %}
+
+{% block main %}
+<div class="container mt-5">
+    <div class="alert text-center" style="border: none;">
+        <h2 class="mb-3 text-success">Order Placed Successfully!</h2>
+        <img src="{% static 'img/success_order.png' %}" alt="Success Order" class="img-fluid mb-3" style="width: 300px; height: auto;">
+        <p class="fs-5">Thank you for your order. We will notify you once it is confirmed.</p>
+        <a href="{% url 'index' %}" class="btn btn-primary btn-lg">Return to Home</a>
+    </div>
+</div>
+{% endblock %}

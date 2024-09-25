@@ -1,4 +1,6 @@
 {% extends 'base.html' %}
+{% load custom_filters %}
+{% load static %}
 
 {% block main %}
 <main class="container-lg py-4">
@@ -12,7 +14,7 @@
     </div>
     <div class="col-lg-10 col-md-12">
       <table class="table table-light table-hover table-bordered">
-        <thead>
+        <thead class="table-secondary">
           <tr>
             <th>ID</th>
             <th>Name</th>
@@ -28,35 +30,36 @@
         <tbody>
           {% for pro in products %}
           <tr>
-            <td>{{ pro.id }}</td>
-            <td>{{ pro.title }}</td>
-            <td>{{ pro.quantity }}</td>
-            <td>{{ pro.stock }}</td>
-            <td>{{ pro.mrp }}</td>
-            <td>{{ pro.price }}</td>
-            <td>{{ pro.category.category_name }}</td>
-            <td>
-              {% if pro.image %}
-              <img src="{{ pro.image.url }}" alt="{{ pro.title }}" class="img-fluid" style="max-width: 40px;">
+            <th>{{ forloop.counter }}</th>
+            <th>{{ pro.title }}</th>
+            <th>{{ pro.quantity }}</th>
+            <th>{{ pro.stock }}</th>
+            <th>{{ pro.mrp }}</th>
+            <th>{{ pro.price }}</th>
+            <th>{{ pro.category.category_name }}</th>
+            <th>
+              {% if pro.image and pro.image.url|file_exists %}
+              <img src="{{ pro.image.url }}" alt="{{ pro.title }}"class="img-fluid" style="max-width: 50px; height: auto;">
               {% else %}
-              <span>No image</span>
+              <img src="{% static 'img/placeholder.jpeg' %}" alt="Image not available"
+                style="width: 50px; height: auto;">
               {% endif %}
-            </td>
-            <td class="text-center">
+            </th>
+            <th class="text-center">
               <div class="d-flex justify-content-center align-items-center">
                 <a class="text-decoration-none" href="{% url 'edit_product' pro.id %}">
                   <abbr title="Edit">
-                    <span class="material-symbols-outlined">edit_note</span>
+                    <span class="material-icons">edit_note</span>
                   </abbr>
                 </a>
                 <a class="text-decoration-none ms-3 text-danger" href="{% url 'delete_product' pro.id %}"
                   onclick="return confirm('Are you sure you want to delete this product?');">
                   <abbr title="Delete">
-                    <span class="material-symbols-outlined">delete</span>
+                    <span class="material-icons">delete</span>
                   </abbr>
                 </a>
               </div>
-            </td>
+            </th>
           </tr>
           {% endfor %}
         </tbody>

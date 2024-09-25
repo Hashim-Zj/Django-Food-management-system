@@ -2,6 +2,7 @@ from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from .models import Category,Products
+from Users.models import Order
 
 # Forms Needed in Admin panals
 class AdminLoginForm(forms.ModelForm):
@@ -74,3 +75,19 @@ class ProductForm(forms.ModelForm):
         self.add_error('stock', 'Stock cannot be negative.')
 
       return cleaned_data
+  
+
+class OrderUpdateForm(forms.ModelForm):
+    STATUS_CHOICES = [
+        ('dispatched', 'Dispatched'),
+        ('cancelled', 'Cancelled'),
+        ('delivered', 'Delivered'),
+    ]
+    status = forms.ChoiceField(choices=STATUS_CHOICES, widget=forms.Select(attrs={'class': 'form-control'}))
+
+    class Meta:
+        model = Order
+        fields = ['status', 'expected_delivery_date']
+        widgets = {
+            'expected_delivery_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+        }

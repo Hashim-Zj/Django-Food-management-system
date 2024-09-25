@@ -91,19 +91,35 @@ class ProfileForm(forms.ModelForm):
         label="Email",
         max_length=254,
         required=True,
-        widget=forms.EmailInput(attrs={"class": "form-control mb-1"}),
+        widget=forms.EmailInput(
+            attrs={
+                "class": "form-control mb-1",
+                "placeholder": "Enter your email",
+                "required": "required",
+            }
+        ),
     )
-    first_name = forms.EmailField(
+    first_name = forms.CharField(
         label="First Name",
         max_length=254,
         required=True,
-        widget=forms.TextInput(attrs={"class": "form-control mb-1"}),
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control mb-1",
+                "placeholder": "Enter your first name",
+                "required": "required",
+            }
+        ),
     )
-    last_name = forms.EmailField(
+    last_name = forms.CharField(
         label="Last Name",
         max_length=254,
-        required=True,
-        widget=forms.TextInput(attrs={"class": "form-control mb-1"}),
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control mb-1",
+                "placeholder": "Enter your last name",
+            }
+        ),
     )
 
     class Meta:
@@ -114,9 +130,27 @@ class ProfileForm(forms.ModelForm):
             "pin_code",
         ]
         widgets = {
-            "mobile_number": forms.TextInput(attrs={"class": "form-control"}),
-            "address": forms.TextInput(attrs={"class": "form-control"}),
-            "pin_code": forms.TextInput(attrs={"class": "form-control"}),
+            "mobile_number": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "Mobile Number",
+                    "required": "required",
+                }
+            ),
+            "address": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "Address",
+                    "required": "required",
+                }
+            ),
+            "pin_code": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "PIN Code",
+                    "required": "required",
+                }
+            ),
         }
 
     def __init__(self, *args, **kwargs):
@@ -136,13 +170,3 @@ class AddToCartForm(forms.ModelForm):
         model = Cart
         fields = ["quantity"]
         widgets = {"quantity": forms.NumberInput(attrs={"class": "form-control"})}
-
-
-class OrderPlaceForm(forms.ModelForm):
-    class Meta:
-        model = Order
-        fields = ["address", "phone"]
-        widgets = {
-            "address": forms.Textarea(attrs={"class": "form-control"}),
-            "phone": forms.NumberInput(attrs={"class": "form-control"}),
-        }

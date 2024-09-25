@@ -1,16 +1,27 @@
 {% extends 'base.html' %}
 {% load static %}
 
+  {% block title %}
+  🥜Cracker | Precerve Your Food for a beter Days
+  {% endblock title %}
+
 {% block style %}
 <link rel="stylesheet" href="{% static 'css/style.css' %}">
+<style>
+  main {
+    padding-top: 60px;
+  }
+</style>
+
 {% endblock style %}
 
 {% block header %}
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
+<nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
   <div class="container-fluid d-flex align-items-center">
 
     <figure class="mb-0">
-      <img width="600px" height="auto" class="navbar-logo rounded-circle" src="{% static 'img/wine_bottle.jpeg' %}" alt="NutCracker">
+      <img width="60px" height="auto" class="navbar-logo rounded-circle" src="{% static 'img/wine_bottle.jpeg' %}"
+        alt="NutCracker">
     </figure>
     <a class="navbar-brand ms-2" href="#">
       <h1 class="display-6 fw-bold mb-0">NutCracker</h1>
@@ -61,19 +72,25 @@
           </a>
         </li>
         {% else %}
-        <li class="nav-item"><a class="btn btn-dark px-2 fw-bold me-4" href="{% url 'login' %}">Sign In</a></li>
-        <li class="nav-item"><a class="btn btn-outline-dark px-2 fw-bold" href="{% url 'register' %}">Sign Up</a></li>
+        <li class="nav-item"><a class="btn btn-dark px-2 fw-bold me-2" href="{% url 'register' %}">Sign Up</a></li>
+        <li class="nav-item"><a class="btn btn-outline-dark px-2 fw-bold me-2" href="{% url 'login' %}">Sign In</a></li>
         {% endif %}
         {% if request.user.is_authenticated %}
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle fw-bold fs-5 d-flex align-items-center" href="#" id="navbarDropdown"
             role="button" data-bs-toggle="dropdown" aria-expanded="false"><span
-              class="material-icons fs-2">manage_accounts</span> {{ request.user }}</a>
+              class="material-icons text-success fs-2">manage_accounts</span> {{ request.user }}</a>
           <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
             <li><a class="dropdown-item d-flex align-items-center fw-bold" href="{% url 'profile_form' %}"><span
                   class="material-icons text-success me-2">verified</span>Your Profile</a></li>
             <li>
-              <a class="dropdown-item d-flex align-items-center fw-bold" href="{% url 'logout' %}"><span class="material-icons fw-bold text-danger me-2">logout</span>LogOut</a>
+            <li><a class="dropdown-item d-flex align-items-center fw-bold" href="{% url 'your_orders' %}"><span
+                  class="material-icons text-warning me-2">
+                  low_priority
+                </span>Your Orders</a></li>
+            <li>
+              <a class="dropdown-item d-flex align-items-center fw-bold" href="{% url 'logout' %}"><span
+                  class="material-icons fw-bold text-danger me-2">logout</span>LogOut</a>
             </li>
           </ul>
         </li>
@@ -85,4 +102,5 @@
 {% endblock header %}
 
 {% block main %}
+
 {% endblock main %}

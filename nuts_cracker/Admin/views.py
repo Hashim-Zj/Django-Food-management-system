@@ -1,14 +1,14 @@
-from django.db.models.query import QuerySet
-from django.forms import BaseModelForm
-from django.http import HttpRequest
 from django.urls import reverse_lazy
 from django.shortcuts import render,redirect,HttpResponse
+from django.core.mail import send_mail
+from django.conf import settings
 from django.views import View
 from django.views.generic import TemplateView,FormView,ListView,DetailView,UpdateView,DeleteView
 from django.contrib.auth import login,logout,authenticate
 from django.contrib import messages
-from .forms import AdminLoginForm,AddCategoryForm,UpdateCategoryForm,ProductForm
+from .forms import AdminLoginForm,AddCategoryForm,UpdateCategoryForm,ProductForm,OrderUpdateForm
 from .models import Category,Products
+from Users.models import Order
 from .decorator import admin_required
 from django.utils.decorators import method_decorator
 
@@ -43,7 +43,7 @@ class LogoutView(View):
   def get(self,request):
     logout(request)
     messages.warning(request,'Your LogOut !')
-    return redirect('admin_index')
+    return redirect('admin_login')
 
 
 """|| CATEGORY VIEWS ||"""
@@ -98,25 +98,6 @@ class CategoryDeleteView(View):
     return redirect('category_list')
 
 
-# class CategoryDeleteView(DeleteView):
-  # model = Category
-  # success_url = reverse_lazy('category_list')
-  # pk_url_kwarg='id'
-
-  # def delete(self, request, *args, **kwargs):
-  #   self.object=self.get_object()
-  #   try:
-  #     print(self.object)
-  #     self.object.delete()
-
-  #   except Exception as e:
-  #     messages.error(self.request, f'Failed to delete category : {e}')
-  #     return super().delete(request,*args,**kwargs)
-    
-  #   messages.success(self.request, f"Category '{self.object.category_name}' deleted successfully.")
-  #   return super().delete(request, *args, **kwargs)
-
-
 """|| PRODUCTS VIEWS ||"""
 
 @method_decorator(admin_required,name="dispatch")
@@ -159,18 +140,50 @@ class ProductDeleteView(View):
       return redirect('product_list')
     return redirect('product_list')
 
-# class ProductDeleteView(DeleteView):
-#   model=Products
-#   success_url=reverse_lazy('product_list')
 
-#   def delete(self, request, *args, **kwargs):
-#     try:
-#       product = self.get_object()  # Get the product object
-#       response = super().delete(request, *args, **kwargs)
-#       messages.success(request, f"Product '{product.title}' deleted successfully.")
-#       return response
-#     except:
-#       messages.warning(request, "The product you are trying to delete does not exist.")
-#       return self.get(request, *args, **kwargs)
+@method_decorator(admin_required,name="dispatch")
+class NewOrderListView(ListView):
+    model = Order
+    template_name = "new_orders_list.html" 
+    context_object_name = "orders"
 
+    def get_queryset(self):
+        return Order.objects.filter(status='order-placed').order_by('-date')
+    
 
+@method_decorator(admin_required,name="dispatch")
+class OrderDetailView(DetailView):
+    model = Order
+    template_name = "order_detail.html"
+    context_object_name = "order"
+
+    def post(self, request, *args, **kwargs):
+        order = self.get_object()
+
+        form = OrderUpdateForm(request.POST, instance=order)
+
+        if form.is_valid():
+            order = form.save(commit=False)  # Creates an Order instance without saving it
+            order.expected_delivery_date = form.cleaned_data.get('expected_delivery_date') 
+            order.status = form.cleaned_data.get('status')
+            order.save()
+
+            self.send_order_status_email(order)
+
+            return redirect(reverse_lazy('new_orders'))  # Redirect after saving
+
+        return self.render_to_response(self.get_context_data(form=form))
+
+    def send_order_status_email(self, order):
+        subject = f"Your order status has been updated to {order.status}"
+        message = f"Dear {order.user.first_name},\n\nYour order for {order.product.title} has been updated to '{order.status}'. Expected delivery date: {order.expected_delivery_date}.\n\nThank you!"
+        from_email = settings.DEFAULT_FROM_EMAIL
+        recipient_list = [order.user.email]
+
+        send_mail(subject, message, from_email, recipient_list)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if "form" not in context:
+            context["form"] = OrderUpdateForm(instance=self.get_object())
+        return context

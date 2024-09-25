@@ -1,0 +1,125 @@
+{% extends 'index.html' %}
+{% load static %}
+{% load custom_filters %}
+
+<head>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+
+{% block main %}
+<div class="container mt-5">
+  <h1 class="text-center">Checkout</h1>
+
+  <!-- Profile Information -->
+  <div class="card mb-4">
+    <div class="card-header">
+      <h5>Your Profile</h5>
+    </div>
+    <div class="card-body fs-5">
+      <p><strong>Name:</strong> {{ profile.user.first_name }} {{ profile.last_name }}</p>
+      <p><strong>Email:</strong> {{ profile.user.email }}</p>
+      <p><strong>Address:</strong> {{ profile.address }}</p>
+      <p><strong>Mobile Number:</strong> {{ profile.mobile_number }} <strong>Pin:</strong> {{ profile.pin_code }}</p>
+    </div>
+  </div>
+
+  <!-- Cart Items Section -->
+  <div class="card mb-4">
+    <div class="card-header">
+      <h5>Your Cart Items</h5>
+    </div>
+    <div class="card-body">
+      {% if cart_items %}
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Image</th>
+            <th>Product Name</th>
+            <th>Quantity</th>
+            <th>Price</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              {% if cart_items.product.image and cart_items.product.image.url|file_exists %}
+              <img src="{{ cart_items.product.image.url }}" alt="{{ cart_items.product.title }}" style="width: 50px; height: auto;">
+              {% else %}
+              <img src="{% static 'img/placeholder.jpeg' %}" alt="Image not available" style="width: 50px; height: auto;">
+              {% endif %}
+            </td>
+            <td>{{ cart_items.product.title }}</td>
+            <td>{{ cart_items.quantity }}</td>
+            <td>₹ {{ cart_items.product.price }}</td>
+            <td>₹ {{ total_price }}</td>
+          </tr>
+        </tbody>
+      </table>
+      <h5 class="text-end fw-bold">Total Price: <strong class="text-success">₹ {{ total_price }}</strong></h5>
+      {% else %}
+      <p class="text-danger">Your cart is empty!</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Payment Method Selection -->
+  <div class="card mb-4">
+    <div class="card-header">
+      <h5>Select Payment Method</h5>
+    </div>
+    <div class="card-body fs-5">
+      <form method="POST" action="{% url 'checkout' %}">
+        {% csrf_token %}
+        
+        <!-- Payment Method Selection -->
+        <div class="mb-4">
+          <label for="paymentMethod" class="form-label"><strong>Payment Method:</strong></label>
+          <select id="paymentMethod" name="payment_method" class="form-select">
+            <option value="credit_card">Credit Card</option>
+            <option value="upi">UPI</option>
+            <option value="cash_on_delivery">Cash on Delivery</option>
+          </select>
+        </div>
+  
+        <!-- Payment Details Entry -->
+        <div class="mb-4">
+          <label for="paymentDetails" class="form-label">Enter Payment Details:</label>
+          <input type="text" id="paymentDetails" name="payment_details" class="form-control" placeholder="Enter relevant payment details" required>
+        </div>
+  
+        <!-- Hidden Inputs -->
+        <input type="hidden" name="cart_item" value="{{ cart_items.id }}">
+  
+        <!-- Buttons Section -->
+        <div class="d-flex justify-content-end mt-3">
+          <a href="{% url 'cart_list' %}" class="btn btn-secondary me-3">Go Back to Cart</a>
+          <button type="submit" class="btn btn-warning">Proceed to Payment</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  
+</div>
+
+<script>
+  // JavaScript to handle the dropdown item selection (if applicable)
+  document.querySelectorAll('.dropdown-item').forEach(function (item) {
+    item.addEventListener('click', function (event) {
+      event.preventDefault();  // Prevent the default link behavior
+
+      // Get the icon HTML and the selected text
+      var selectedIcon = this.querySelector('.material-icons').outerHTML;  // Get the icon HTML
+      var selectedText = this.innerText.trim();  // Get the selected text (e.g., Credit Card)
+
+      // Update the dropdown button with both the icon and the text
+      document.getElementById('paymentMethodDropdown').innerHTML = selectedIcon + ' ' + selectedText;
+
+      // Get the value from data attribute and set it to the hidden input field
+      var selectedValue = this.getAttribute('data-value');  // Get the value (e.g., credit_card)
+      document.getElementById('selectedPaymentMethod').value = selectedValue;  // Set the hidden input field
+    });
+  });
+</script>
+
+{% endblock main %}

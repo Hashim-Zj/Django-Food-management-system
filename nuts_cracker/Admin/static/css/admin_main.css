@@ -1,12 +1,33 @@
 
-
-
-
-:root{
-  --FF:'Times New Roman', Times, serif;
+.navbar-logo {
+  width: 60px; /* Maintain the aspect ratio */
+  height: auto;
+  object-fit: cover; /* Prevent distortion */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow */
 }
 
+/* Styling for the navbar text */
+.navbar-brand {
+  font-size: 1.5rem;
+  /* Adjust the text size */
+  color: #343a40;
+  font-family: 'Arial', sans-serif;
+}
 
+/* Padding and layout adjustments for the navbar */
+.navbar {
+  padding: 15px 20px;
+  /* Ensure good spacing inside the navbar */
+}
+
+.navbar-toggler {
+  border: none;
+  /* Remove the border from the toggler button */
+}
+
+.navbar-toggler-icon {
+  color: #343a40;
+}
 /* || NAVBAR DROPDOWN HOVER EFECT */
 
 @media (min-width: 992px) {

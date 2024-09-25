@@ -12,13 +12,15 @@ urlpatterns = [
   path('auth/resend_otp/',views.resend_otp, name='otp_resend'),
   path('save_profile/',views.ProfileFormView.as_view(), name='profile_form'),
   path('product/<int:pk>/', views.ProductDetailView.as_view(), name='product_detail'),
-  path('cartlist/',views.CartListView.as_view(),name='cart_list'),
-  path('add_to_cart/<int:pk>/', views.AddToCartView.as_view(), name='add_to_cart'),
+  path('cart/list/',views.CartListView.as_view(),name='cart_list'),
+  path('cart/add/<int:pk>/', views.AddToCartView.as_view(), name='add_to_cart'),
+  path('cart/remove/<int:pk>/', views.RemoveCartItemView.as_view(), name='remove_cart'),
   path('wishlist/',views.WishlistView.as_view(), name='wishlist'),
   path('wishlist/add/<int:pk>/', views.AddToWishlistView.as_view(), name='add_to_wishlist'),
-  path('wishlist/add/<int:pk>/', views.AddToWishlistView.as_view(), name='add_to_wishlist'),
   path('wishlist/remove/<int:pk>/',views.RemoveFromWishlistView.as_view(), name='remove_from_wishlist'),
-  
-  # path('place_order/<int:pk>/', views.place_order, name='place_order'),
+  path('ordernow/<int:pk>/',views.OrderNow.as_view(), name='order_now'),
+  path('orderlist/',views.YourOrdersView.as_view(), name='your_orders'),
+  path('checkout/',views.CheckoutView.as_view(), name='checkout'),
+
   path('non-existing-page/',views.non_existing_view, name='non_existing'),
 ]
